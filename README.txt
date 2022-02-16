@@ -1,0 +1,24 @@
+# wordlist_gen
+simple flexible wordlist generator
+
+outputs to stdout
+
+takes one argument (the pattern (-p))
+
+[] to separate characters of the password; prepend a number to repeat
+{} to specify specific characters to include in the character set for one password character (\ to escape)
+
+@ number row symbols ~`!@#$%^&*()_-+=
+: side symbols {[}]|\:;"'<,>.?/
+
+a lower case letters
+A upper case letters
+
+# numbers 0123456789
+
+% all letters
+= all symbols
+
+! no character
+
+* everything except none
