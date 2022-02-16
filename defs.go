@@ -17,7 +17,7 @@ const (
 
 const (
 	numSymSet  = "~`!@#$%^&*()_-+="
-	sideSymSet = "{[}]|\\:;\"'<,>.?/"
+	sideSymSet = "{[}]|\\:;\"'<,>.?/ "
 
 	numSet = "0123456789"
 
