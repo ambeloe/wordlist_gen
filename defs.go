@@ -2,7 +2,7 @@ package main
 
 const (
 	allOp  = '*'
-	noneOp = '!'
+	noneOp = '-'
 
 	allSymOp  = '='
 	numSymOp  = '@'

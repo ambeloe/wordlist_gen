@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
@@ -12,10 +13,25 @@ import (
 func main() {
 	var err error
 
-	//var outfile = flag.String("o", "", "output file")
+	var outfile = flag.String("o", "", "output file")
 	var patt = flag.String("p", "", "pattern to use when generating the wordlist")
+	var est = flag.Bool("e", false, "print a size estimate of the output")
 
 	flag.Parse()
+
+	var buf bufio.Writer
+	if !*est {
+		if *outfile == "" {
+			buf = *bufio.NewWriter(os.Stdout)
+		} else {
+			f, err := os.Create(*outfile)
+			if err != nil {
+				_, _ = fmt.Fprintln(os.Stderr, "Error creating outfile")
+				os.Exit(1)
+			}
+			buf = *bufio.NewWriterSize(f, 0xffff)
+		}
+	}
 
 	v := *patt
 	if v == "" {
@@ -147,15 +163,37 @@ func main() {
 			charsets = append(charsets, cs)
 		}
 	}
+
+	if *est { //print size estimate
+		var keyspace = uint64(len(charsets[0]))
+		for i := 1; i < len(charsets); i++ {
+			keyspace *= uint64(len(charsets[i]))
+		}
+		size := (keyspace * uint64(len(charsets))) + keyspace
+		//fmt.Println(size)
+		var d uint64
+		for i := 0; i < 12; i += 3 {
+			d = size / pupow(10, uint64(i))
+			if d < 1000 {
+				fmt.Print(d)
+				switch i {
+				case 3:
+					fmt.Println("K")
+				case 6:
+					fmt.Println("M")
+				case 9:
+					fmt.Println("G")
+				case 12:
+					fmt.Println("T")
+				}
+				break
+			}
+		}
+		//fmt.Printf("wordlist size: %d", (keyspace*uint64(len(charsets)))+keyspace)
+		os.Exit(1)
+	}
+
 	cpos = make([]int, len(charsets))
-
-	//for _, runes := range charsets {
-	//	for _, r := range runes {
-	//		fmt.Print(string(r))
-	//	}
-	//	fmt.Println()
-	//}
-
 	b := strings.Builder{}
 	for {
 		for i := len(charsets) - 1; i >= 0; i-- {
@@ -172,15 +210,34 @@ func main() {
 				b.WriteRune(charset[cpos[i]])
 			}
 		}
-		fmt.Println(b.String())
+		_, err = fmt.Fprintln(&buf, b.String())
+		//handling the error causes a ~6% performance decrease
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, "Error writing to file")
+			os.Exit(1)
+		}
 		b.Reset()
 
 		cpos[len(cpos)-1]++
 	}
 gtfo:
+	err = buf.Flush()
+	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, "Error flushing write buffer. Output may be incomplete.")
+	}
 }
 
 type token struct {
 	reps int
 	p    cPatt
+}
+
+//positive unsigned integer exponent; no bounds checking
+func pupow(x, y uint64) uint64 {
+	c := x
+	for y > 1 {
+		c *= x
+		y--
+	}
+	return c
 }

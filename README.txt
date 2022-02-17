@@ -19,6 +19,6 @@ A upper case letters
 % all letters
 = all symbols
 
-! no character
+- no character
 
 * everything except none
