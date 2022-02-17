@@ -15,7 +15,7 @@ func main() {
 
 	var outfile = flag.String("o", "", "output file")
 	var patt = flag.String("p", "", "pattern to use when generating the wordlist")
-	var est = flag.Bool("e", false, "print a size estimate of the output")
+	var est = flag.Bool("e", false, "print estimates of the output")
 
 	flag.Parse()
 
@@ -169,24 +169,30 @@ func main() {
 		for i := 1; i < len(charsets); i++ {
 			keyspace *= uint64(len(charsets[i]))
 		}
+		fmt.Printf("%d possible passwords\n", keyspace)
 		size := (keyspace * uint64(len(charsets))) + keyspace
-		//fmt.Println(size)
+		fmt.Print("Wordlist size: ")
 		var d uint64
-		for i := 0; i < 12; i += 3 {
-			d = size / pupow(10, uint64(i))
-			if d < 1000 {
-				fmt.Print(d)
-				switch i {
-				case 3:
-					fmt.Println("K")
-				case 6:
-					fmt.Println("M")
-				case 9:
-					fmt.Println("G")
-				case 12:
-					fmt.Println("T")
+		if size < 1000 {
+			fmt.Printf("%dB\n")
+		} else {
+			for i := 3; i <= 12; i += 3 {
+				d = size / pupow(10, uint64(i))
+				if d < 1000 || i == 12 {
+					fmt.Print(d)
+					switch i {
+					case 3:
+						fmt.Print("K")
+					case 6:
+						fmt.Print("M")
+					case 9:
+						fmt.Print("G")
+					case 12:
+						fmt.Print("T")
+					}
+					fmt.Println("B")
+					break
 				}
-				break
 			}
 		}
 		//fmt.Printf("wordlist size: %d", (keyspace*uint64(len(charsets)))+keyspace)

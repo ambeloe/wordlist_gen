@@ -3,7 +3,10 @@ simple flexible wordlist generator
 
 outputs to stdout
 
-takes one argument (the pattern (-p))
+arguments:
+-p the pattern
+-e print estimates for keyspace and wordlist size
+-o file to write wordlist to
 
 [] to separate characters of the password; prepend a number to repeat
 {} to specify specific characters to include in the character set for one password character (\ to escape)
