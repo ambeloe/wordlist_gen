@@ -27,6 +27,6 @@ A upper case letters
 * everything except none
 
 Examples:
-	word that begins with P followed by a number and symbol-> [{P}]5[!a]2[#][@]
+	word that begins with P followed by a number and symbol-> [{P}]5[-a]2[#][@]
 	cool, fool, mool, pool, tool, wool -> [{cfmptw}]2[{o}][{l}]
 	custom letters or numbers -> [#{asdf}]
